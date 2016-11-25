@@ -1,10 +1,9 @@
 package org.elasticsearch.index.analysis;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -13,7 +12,6 @@ import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.analysis.util.WordlistLoader;
 import org.apache.lucene.util.IOUtils;
-import org.apache.lucene.util.Version;
 import org.elasticsearch.common.logging.ESLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
@@ -66,57 +64,46 @@ public class JiebaAnalyzer extends Analyzer {
 		}
 	}
 
-	private File configFile;
 	private String type;
 
-	private CharArraySet loadStopWords(File configFile) {
+	private CharArraySet loadStopWords(Path dataPath) {
 		try {
 			return CharArraySet.unmodifiableSet(WordlistLoader.getWordSet(
-					new FileReader(new File(new File(configFile, "jieba"),
-							"stopwords.txt")), STOPWORD_FILE_COMMENT));
+					new FileReader(dataPath.resolve("stopwords.txt").toFile()), STOPWORD_FILE_COMMENT));
 		} catch (IOException e) {
 			return DefaultSetHolder.DEFAULT_STOP_SET;
 		}
 	}
 
-	public JiebaAnalyzer(Settings indexSettings, Settings settings) {
-		super();
-		type = settings.get("seg_mode", "index");
-		boolean stop = settings.getAsBoolean("stop", true);
-
-		Environment env = new Environment(indexSettings);
-		configFile = env.configFile();
-		this.stopWords = stop ? this.loadStopWords(configFile)
-				: CharArraySet.EMPTY_SET;
-		WordDictionary.getInstance().init(configFile.toPath());
+	public JiebaAnalyzer(Settings settings, Environment env) {
+		this(settings.get("seg_mode", "index"), env.pluginsFile().resolve("jieba/dic"),
+				settings.getAsBoolean("stop", true));
 	}
 
-	public JiebaAnalyzer(String segMode, File configFile, boolean isStop) {
+	public JiebaAnalyzer(String segMode, Path dataPath, boolean isStop) {
 		super();
 
 		this.type = segMode;
-		this.configFile = configFile;
-		WordDictionary.getInstance().init(
-				new File(configFile, "jieba").toPath());
-		this.stopWords = isStop ? this.loadStopWords(configFile)
+		WordDictionary.getInstance().init(dataPath);
+		this.stopWords = isStop ? this.loadStopWords(dataPath)
 				: CharArraySet.EMPTY_SET;
 
+		this.log.info("Jieba segMode = {}", type);
 		this.log.info("JiebaAnalyzer isStop = {}", isStop);
 		this.log.info("JiebaAnalyzer stopWords = {}", this.stopWords.toString());
 	}
 
 	@Override
-	protected TokenStreamComponents createComponents(String fieldName,
-			Reader reader) {
+	protected TokenStreamComponents createComponents(String fieldName) {
 		Tokenizer tokenizer;
 		if (type.equals("other")) {
-			tokenizer = new OtherTokenizer(Version.LUCENE_CURRENT, reader);
+			tokenizer = new OtherTokenizer();
 		} else {
-			tokenizer = new SentenceTokenizer(reader);
+			tokenizer = new SentenceTokenizer();
 		}
 		TokenStream result = new JiebaTokenFilter(type, tokenizer);
 		if (!type.equals("other") && !stopWords.isEmpty()) {
-			result = new StopFilter(Version.LUCENE_CURRENT, result, stopWords);
+			result = new StopFilter(result, stopWords);
 		}
 		return new TokenStreamComponents(tokenizer, result);
 	}
