@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
@@ -12,7 +14,6 @@ import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.analysis.util.WordlistLoader;
 import org.apache.lucene.util.IOUtils;
-import org.elasticsearch.common.logging.ESLogger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
@@ -20,7 +21,7 @@ import org.elasticsearch.env.Environment;
 import com.huaban.analysis.jieba.WordDictionary;
 
 public class JiebaAnalyzer extends Analyzer {
-	private final ESLogger log = Loggers.getLogger(JiebaAnalyzer.class);
+	private final Logger log = LogManager.getLogger(JiebaAnalyzer.class);
 
 	private final CharArraySet stopWords;
 
