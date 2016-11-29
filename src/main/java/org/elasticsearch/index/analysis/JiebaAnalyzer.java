@@ -8,13 +8,12 @@ import java.nio.file.Path;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
+import org.apache.lucene.analysis.WordlistLoader;
 import org.apache.lucene.analysis.core.StopFilter;
-import org.apache.lucene.analysis.util.CharArraySet;
-import org.apache.lucene.analysis.util.WordlistLoader;
 import org.apache.lucene.util.IOUtils;
-import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 
@@ -89,9 +88,9 @@ public class JiebaAnalyzer extends Analyzer {
 		this.stopWords = isStop ? this.loadStopWords(dataPath)
 				: CharArraySet.EMPTY_SET;
 
-		this.log.info("Jieba segMode = {}", type);
-		this.log.info("JiebaAnalyzer isStop = {}", isStop);
-		this.log.info("JiebaAnalyzer stopWords = {}", this.stopWords.toString());
+		this.log.info("Jieba segMode = " + type);
+		this.log.info("JiebaAnalyzer isStop = " + isStop);
+		this.log.info("JiebaAnalyzer stopWords = " + this.stopWords.toString());
 	}
 
 	@Override

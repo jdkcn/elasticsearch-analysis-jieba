@@ -4,21 +4,23 @@ import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.inject.assistedinject.Assisted;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
-import org.elasticsearch.index.Index;
-import org.elasticsearch.index.settings.IndexSettingsService;
+import org.elasticsearch.index.IndexSettings;
 
-public class JiebaAnalyzerProvider extends
-        AbstractIndexAnalyzerProvider<JiebaAnalyzer> {
-    private final JiebaAnalyzer analyzer;
+public class JiebaAnalyzerProvider extends AbstractIndexAnalyzerProvider<JiebaAnalyzer> {
+	private final JiebaAnalyzer analyzer;
 
-    @Inject
-    public JiebaAnalyzerProvider(Index index, IndexSettingsService indexSettings, Environment env, @Assisted String name, @Assisted Settings settings) {
-        super(index, indexSettings.getSettings(), name, settings);
-        analyzer = new JiebaAnalyzer(settings, env);
-    }
+	@Inject
+	public JiebaAnalyzerProvider(IndexSettings indexSettings, Environment env, @Assisted String name, @Assisted Settings settings) {
+		super(indexSettings, name, settings);
+		analyzer = new JiebaAnalyzer(settings, env);
+	}
 
-    @Override
-    public JiebaAnalyzer get() {
-        return this.analyzer;
-    }
+	public static JiebaAnalyzerProvider getJiebaAnalyzerProvider(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+		return new JiebaAnalyzerProvider(indexSettings, env, name, settings);
+	}
+
+	@Override
+	public JiebaAnalyzer get() {
+		return this.analyzer;
+	}
 }
