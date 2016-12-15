@@ -10,6 +10,7 @@ import org.elasticsearch.index.IndexSettings;
 import com.huaban.analysis.jieba.WordDictionary;
 
 public class JiebaTokenFilterFactory extends AbstractTokenFilterFactory {
+
 	private String type;
 
 	@Inject
