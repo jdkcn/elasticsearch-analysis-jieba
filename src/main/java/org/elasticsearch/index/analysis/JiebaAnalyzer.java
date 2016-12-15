@@ -12,14 +12,12 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.WordlistLoader;
+import org.apache.lucene.analysis.Analyzer.TokenStreamComponents;
 import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.util.IOUtils;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
 
 import com.huaban.analysis.jieba.WordDictionary;
-//import com.huaban.analysis.jieba.StopWordDictionary;
-import com.huaban.analysis.jieba.SynonymWordDictionary;
 
 public class JiebaAnalyzer extends Analyzer {
 
@@ -86,7 +84,7 @@ public class JiebaAnalyzer extends Analyzer {
 		// StopWordDictionary.getInstance().init(dataPath);
 		this.stopWords = this.loadStopWords(dataPath);
 		// 加载同义词
-		SynonymWordDictionary.getInstance().init(dataPath);
+		//SynonymWordDictionary.getInstance().init(dataPath);
 
 		this.log.info("Jieba segMode = {}", segMode);
 		this.log.info("JiebaAnalyzer stopWords size {}", this.stopWords.size());
@@ -94,18 +92,21 @@ public class JiebaAnalyzer extends Analyzer {
 
 	@Override
 	protected TokenStreamComponents createComponents(String fieldName) {
-		Tokenizer tokenizer;
-		if (segMode.equals("other")) {
-			tokenizer = new OtherTokenizer();
-		} else {
-			tokenizer = new SentenceTokenizer();
-		}
-		TokenStream result = new JiebaTokenFilter(segMode, tokenizer);
-		if (!segMode.equals("other") && !stopWords.isEmpty()) {
-			result = new StopFilter(result, stopWords);
-		}
-		this.log.info("createComponents segMode = {}", segMode);
-		return new TokenStreamComponents(tokenizer, result);
+		//默认实现方式
+//		Tokenizer tokenizer;
+//		if (segMode.equals("other")) {
+//			tokenizer = new OtherTokenizer();
+//		} else {
+//			tokenizer = new SentenceTokenizer();
+//		}
+//		TokenStream result = new JiebaTokenFilter(segMode, tokenizer);
+//		if (!segMode.equals("other") && !stopWords.isEmpty()) {
+//			result = new StopFilter(result, stopWords);
+//		}
+//		this.log.info("createComponents segMode = {}", segMode);
+//		return new TokenStreamComponents(tokenizer, result);
+		
+		
 //		this.log.info("Jieba segMode = {}", segMode);
 //		Tokenizer tokenizer = new SentenceTokenizer();
 //		TokenStream result = new JiebaTokenFilter(segMode, tokenizer);
@@ -114,5 +115,10 @@ public class JiebaAnalyzer extends Analyzer {
 //		}
 //		this.log.info("createComponents segMode = {}", segMode);
 //		return new TokenStreamComponents(tokenizer, result);
+		
+		//采用和IK一样的实现方式是直接调用JiebaTokenizer
+		this.log.info("Jieba segMode = {}", segMode);
+		Tokenizer jiebaTokenizer = new JiebaTokenizer(segMode);
+		return new TokenStreamComponents(jiebaTokenizer);
 	}
 }

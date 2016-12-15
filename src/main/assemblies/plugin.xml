@@ -46,6 +46,7 @@
 			<useTransitiveFiltering>true</useTransitiveFiltering>
 			<includes>
 				<include>com.huaban:jieba-analysis</include>
+				<include>commons-io:commons-io</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>

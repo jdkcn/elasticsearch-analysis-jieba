@@ -15,21 +15,24 @@ import org.elasticsearch.index.IndexSettings;
  * @date 2016年12月14日
  */
 public class JiebaTokenizerFactory extends AbstractTokenizerFactory {
+	
+	private final Tokenizer tokenizer;
 
-	public JiebaTokenizerFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
+	public JiebaTokenizerFactory(IndexSettings indexSettings, Environment env, String name, Settings settings,String segMode) {
 		super(indexSettings, name, settings);
+		tokenizer = new JiebaTokenizer(segMode);
 	}
 
 	public static JiebaTokenizerFactory getJiebaIndexTokenizerFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
-		return new JiebaTokenizerFactory(indexSettings, env, name, settings);
+		return new JiebaTokenizerFactory(indexSettings, env, name, settings,"index");
 	}
 
 	public static JiebaTokenizerFactory getJiebaSearchTokenizerFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
-		return new JiebaTokenizerFactory(indexSettings, env, name, settings);
+		return new JiebaTokenizerFactory(indexSettings, env, name, settings,"search");
 	}
 	
 	public static JiebaTokenizerFactory getJiebaOtherTokenizerFactory(IndexSettings indexSettings, Environment env, String name, Settings settings) {
-		return new JiebaTokenizerFactory(indexSettings, env, name, settings);
+		return new JiebaTokenizerFactory(indexSettings, env, name, settings,"other");
 	}
 
 	/**
@@ -37,7 +40,7 @@ public class JiebaTokenizerFactory extends AbstractTokenizerFactory {
 	 */
 	@Override
 	public Tokenizer create() {
-		return new JiebaTokenizer();
+		return this.tokenizer;
 	}
 
 }

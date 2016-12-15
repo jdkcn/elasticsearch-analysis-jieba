@@ -13,7 +13,18 @@ import org.elasticsearch.indices.analysis.AnalysisModule.AnalysisProvider;
 import org.elasticsearch.plugins.AnalysisPlugin;
 import org.elasticsearch.plugins.Plugin;
 
-public class AnalysisJiebaPlugin extends Plugin implements AnalysisPlugin{
+public class AnalysisJiebaPlugin extends Plugin implements AnalysisPlugin {
+
+	public static String PLUGIN_NAME = "analysis-jieba";
+
+	@Override
+	public Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> getTokenizers() {
+		Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> extra = new HashMap<>();
+		extra.put("jieba_index", JiebaTokenizerFactory::getJiebaIndexTokenizerFactory);
+		extra.put("jieba_search", JiebaTokenizerFactory::getJiebaSearchTokenizerFactory);
+		extra.put("jieba_other", JiebaTokenizerFactory::getJiebaOtherTokenizerFactory);
+		return extra;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -26,16 +37,5 @@ public class AnalysisJiebaPlugin extends Plugin implements AnalysisPlugin{
 		extra.put("jieba_other", JiebaAnalyzerProvider::getJiebaOtherAnalyzerProvider);
 		return extra;
 	}
-	
-	public Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> getTokenizers() {
-        Map<String, AnalysisModule.AnalysisProvider<TokenizerFactory>> extra = new HashMap<>();
-
-        extra.put("jieba_index", JiebaTokenizerFactory::getJiebaIndexTokenizerFactory);
-		extra.put("jieba_search", JiebaTokenizerFactory::getJiebaSearchTokenizerFactory);
-		extra.put("jieba_other", JiebaTokenizerFactory::getJiebaOtherTokenizerFactory);
-
-        return extra;
-    }
-
 
 }
