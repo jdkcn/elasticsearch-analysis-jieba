@@ -83,7 +83,7 @@ public final class JiebaTokenizer extends Tokenizer {
 				segTokenList = segmenter.process(inputString, SegMode.SEARCH);
 			}
 			logger.info("segMode is {}",segMode);
-			logger.info("segTokenList is {}",segTokenList.toString());
+			//logger.info("segTokenList is {}",segTokenList.toString());
 			iterator = segTokenList.iterator();
 		}
 		if (iterator.hasNext()) {
