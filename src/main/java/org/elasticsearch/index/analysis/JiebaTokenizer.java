@@ -28,7 +28,7 @@ import com.huaban.analysis.jieba.SegToken;
  */
 public final class JiebaTokenizer extends Tokenizer {
 	
-	private final Logger logger = LogManager.getLogger(JiebaTokenizer.class);
+	//private final Logger logger = LogManager.getLogger(JiebaTokenizer.class);
 
 	private String segMode;
 	
@@ -82,7 +82,7 @@ public final class JiebaTokenizer extends Tokenizer {
 			}else if(segMode.equals("search")){
 				segTokenList = segmenter.process(inputString, SegMode.SEARCH);
 			}
-			logger.info("segMode is {}",segMode);
+			//logger.info("segMode is {}",segMode);
 			//logger.info("segTokenList is {}",segTokenList.toString());
 			iterator = segTokenList.iterator();
 		}
@@ -93,7 +93,6 @@ public final class JiebaTokenizer extends Tokenizer {
 			termAtt.copyBuffer(tokenString.toCharArray(), 0, tokenString.length());
 			typeAtt.setType("word");
 			return true;
-
 		}
 		return false;
 	}
